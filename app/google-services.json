@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "951189215994",
+    "firebase_url": "https://onboard-34ebb.firebaseio.com",
+    "project_id": "onboard-34ebb",
+    "storage_bucket": "onboard-34ebb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951189215994:android:8c657586596f6519",
+        "android_client_info": {
+          "package_name": "com.konel.kryptapps.onboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "951189215994-9m8br46vt3ks07m4349qqscptfp3ohaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.konel.kryptapps.onboard",
+            "certificate_hash": "9e7f9b000fd0e40cc5bc08de3f1ce9bd37ac29c7"
+          }
+        },
+        {
+          "client_id": "951189215994-3icncnbvmgs3usmeomtrc0n730m3k793.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzN7ogaHIoBpVKykAVWJ2tisT5RXJPVN0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "951189215994-3icncnbvmgs3usmeomtrc0n730m3k793.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
