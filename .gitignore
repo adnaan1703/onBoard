@@ -11,7 +11,6 @@
 gradle/
 gradlew
 gradlew.bat
-settings.gradle
 
 # Created by https://www.gitignore.io/api/java,maven,macos,gradle,android,androidstudio
 
