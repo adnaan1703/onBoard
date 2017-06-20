@@ -1,15 +1,9 @@
-*.iml
-.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
-.DS_Store
-/build
 /captures
 .externalNativeBuild
 *idea/
-gradlew
-gradlew.bat
 
 # Created by https://www.gitignore.io/api/java,maven,macos,gradle,android,androidstudio
 
@@ -58,9 +52,6 @@ captures/
 
 # Keystore files
 *.jks
-
-# External native build folder generated in Android Studio 2.2 and later
-.externalNativeBuild
 
 # Freeline
 freeline.py
