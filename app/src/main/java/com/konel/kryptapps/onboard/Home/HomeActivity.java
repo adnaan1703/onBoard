@@ -1,6 +1,7 @@
 package com.konel.kryptapps.onboard.Home;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,9 +9,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.appinvite.FirebaseAppInvite;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.konel.kryptapps.onboard.CreateEventActivity;
 import com.konel.kryptapps.onboard.R;
 
@@ -29,6 +36,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private Fragment eventFragment;
     private Fragment profileFragment;
+    private static final String TAG = HomeActivity.class.getSimpleName();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -65,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+        handleDeeplink();
 
         eventFragment = EventFragment.newInstance();
         profileFragment = ProfileFragment.newInstance();
@@ -78,5 +87,45 @@ public class HomeActivity extends AppCompatActivity {
     public void createEvent() {
         Intent i = new Intent(this, CreateEventActivity.class);
         startActivity(i);
+    }
+
+    private void handleDeeplink(){
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData data) {
+                        if (data == null) {
+                            Log.d(TAG, "getInvitation: no data");
+                            return;
+                        }
+
+                        // Get the deep link
+                        Uri deepLink = data.getLink();
+
+                        // Extract invite
+                        FirebaseAppInvite invite = FirebaseAppInvite.getInvitation(data);
+                        if (invite != null) {
+                            String invitationId = invite.getInvitationId();
+                        }
+
+                        // Handle the deep link
+                        // [START_EXCLUDE]
+                        Log.d(TAG, "deepLink:" + deepLink);
+                        if (deepLink != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setPackage(getPackageName());
+                            intent.setData(deepLink);
+
+                           // startActivity(intent);
+                        }
+                        // [END_EXCLUDE]
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "getDynamicLink:onFailure", e);
+                    }
+                });
     }
 }

@@ -19,9 +19,6 @@ import butterknife.ButterKnife;
 public class ProfileFragment extends Fragment {
 
     // All views
-    @BindView(R.id.sometext)
-    TextView someText;
-
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -43,7 +40,6 @@ public class ProfileFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, rootView);
 
-        someText.setText("Profile Page");
 
         return rootView;
     }
