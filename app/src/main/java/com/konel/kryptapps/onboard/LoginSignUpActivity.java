@@ -1,8 +1,8 @@
 package com.konel.kryptapps.onboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -101,7 +101,7 @@ public class LoginSignUpActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Snackbar.make(container, "Login Successful", Snackbar.LENGTH_LONG).show();
+                            routeToHomeActivity();
                             user = task.getResult().getUser();
                             Log.d("KRYPTO_FIREBASE", String.format(Locale.getDefault(),
                                     "signInWithCredentials: Success %s %s %s %s",
@@ -114,5 +114,10 @@ public class LoginSignUpActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void routeToHomeActivity(){
+        Intent intent = new Intent(this,HomeActivity.class);
+        startActivity(intent);
     }
 }

@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -110,7 +112,11 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, LoginSignUpActivity.class));
+                if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+                    startActivity(new Intent(SplashActivity.this, HomeActivity.class));
+                }else {
+                    startActivity(new Intent(SplashActivity.this, LoginSignUpActivity.class));
+                }
             }
         }, 1800);
     }
