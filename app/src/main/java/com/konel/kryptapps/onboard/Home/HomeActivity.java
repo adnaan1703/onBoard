@@ -21,6 +21,8 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.konel.kryptapps.onboard.CreateEventActivity;
 import com.konel.kryptapps.onboard.R;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -89,7 +91,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void handleDeeplink(){
+    private void handleDeeplink() {
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
                     @Override
@@ -112,11 +114,14 @@ public class HomeActivity extends AppCompatActivity {
                         // [START_EXCLUDE]
                         Log.d(TAG, "deepLink:" + deepLink);
                         if (deepLink != null) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setPackage(getPackageName());
-                            intent.setData(deepLink);
+                            String url = deepLink.getQueryParameter("link");
+                            Uri u = Uri.parse(url);
+                            List<String> path = u.getPathSegments();
+                            String eventId = path.get(0);
+                            Log.d(TAG, eventId);
 
-                           // startActivity(intent);
+
+                            // startActivity(intent);
                         }
                         // [END_EXCLUDE]
                     }
