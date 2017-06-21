@@ -72,7 +72,6 @@ public class OnBoardingActivity extends Activity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-
         mAuth = FirebaseAuth.getInstance();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -131,7 +130,6 @@ public class OnBoardingActivity extends Activity implements
         // [START_EXCLUDE silent]
         showProgressDialog();
         // [END_EXCLUDE]
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -341,18 +339,28 @@ public class OnBoardingActivity extends Activity implements
         );
     }
 
-    private void signInWithCredentials(PhoneAuthCredential phoneAuthCredential, String phoneNumber) {
+    private void signInWithCredentials(PhoneAuthCredential phoneAuthCredential, final String phoneNumber) {
 
-        user.updatePhoneNumber(phoneAuthCredential);
+        user.updatePhoneNumber(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.e("status", String.valueOf(task.isSuccessful()));
+                if (task.isSuccessful()) {
+                    User userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber);
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference userCollection = database.getReference("users");
+                    DatabaseReference userObject = userCollection.child(phoneNumber);
+                    userObject.setValue(userOb);
 
-        User userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference userCollection = database.getReference("users");
-        DatabaseReference userObject = userCollection.child(phoneNumber);
-        userObject.setValue(userOb);
+                    Toast.makeText(OnBoardingActivity.this, "user created or updated", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-        Toast.makeText(this, "user created or updated", Toast.LENGTH_SHORT).show();
-        finish();
+
     }
 
 
