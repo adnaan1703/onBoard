@@ -30,6 +30,7 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.konel.kryptapps.onboard.Home.HomeActivity;
 import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.CodeUtil;
 
@@ -351,8 +352,9 @@ public class OnBoardingActivity extends Activity implements
                     DatabaseReference userCollection = database.getReference("users");
                     DatabaseReference userObject = userCollection.child(phoneNumber);
                     userObject.setValue(userOb);
-
-                    Toast.makeText(OnBoardingActivity.this, "user created or updated", Toast.LENGTH_SHORT).show();
+                    // Opening Home after sucefuk user creation
+                    Intent intent = new Intent(OnBoardingActivity.this, HomeActivity.class);
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
