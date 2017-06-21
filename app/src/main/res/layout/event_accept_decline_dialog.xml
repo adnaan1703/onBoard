@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:id="@+id/eventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Firebase Conference and Demo" />
+
+        <ImageView
+            android:id="@+id/ownerOfEventIndicator"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/eventName"
+            app:srcCompat="@drawable/ic_verified_user_black_24dp" />
+
+        <com.konel.kryptapps.onboard.custom.ReadMoreTextView
+            android:id="@+id/eventDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/eventName"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:trimLength="200"
+            tools:text="Firebase event is an demonstration of power of firebase" />
+
+        <LinearLayout
+            android:id="@+id/container_eventData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/eventDescription"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/eventImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/eventDescription" />
+
+            <TextView
+                android:id="@+id/eventLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/eventDescription"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_toRightOf="@id/eventImage"
+                tools:text="Taj Hotel on 24th July" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/activity_vertical_margin">
+
+        <Button
+            android:id="@+id/declined"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:text="YES" />
+
+        <Button
+            android:id="@+id/accepted"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/colorBackground"
+            android:text="NO" />
+    </LinearLayout>
+
+</LinearLayout>
