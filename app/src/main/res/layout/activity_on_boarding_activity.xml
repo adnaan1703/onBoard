@@ -5,7 +5,6 @@
     android:gravity="center"
     android:orientation="vertical">
 
-
     <EditText
         android:id="@+id/user_phone_number_d"
         android:layout_width="match_parent"

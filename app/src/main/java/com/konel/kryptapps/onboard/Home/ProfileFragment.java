@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +35,11 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.user_phone_number)
     TextView user_phone_number;
 
+    @BindView(R.id.progressbar)
+    ProgressBar progressBar;
+
+    User user;
+
     // All views
     public ProfileFragment() {
         // Required empty public constructor
@@ -55,26 +61,32 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, rootView);
+        progressBar.setVisibility(View.GONE);
+        if (user == null) {
+            progressBar.setVisibility(View.VISIBLE);
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(PreferenceUtil.getString(PreferenceUtil.USER_ID))
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            user = dataSnapshot.getValue(User.class);
+                            populateUserProfile();
+                            progressBar.setVisibility(View.GONE);
+                        }
 
-        FirebaseDatabase.getInstance().getReference("users")
-                .child(PreferenceUtil.getString(PreferenceUtil.USER_ID))
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        populateUserProfile(user);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+        } else {
+            populateUserProfile();
+        }
 
         return rootView;
     }
 
-    private void populateUserProfile(User user) {
+    private void populateUserProfile() {
         if (user == null)
             return;
 

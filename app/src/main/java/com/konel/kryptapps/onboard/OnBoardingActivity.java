@@ -324,6 +324,7 @@ public class OnBoardingActivity extends Activity implements
 //        }
 
         if (i == R.id.user_loginbutton) {
+
             displayAndCreateRtduser();
         }
 
@@ -341,6 +342,7 @@ public class OnBoardingActivity extends Activity implements
     }
 
     public void onSubmit(String phoneNumber1) {
+        showProgressDialog();
         String phoneNumber = phoneNumber1;
         phoneNumber = "+91" + phoneNumber;
         final String finalPhoneNumber = phoneNumber;
@@ -350,11 +352,13 @@ public class OnBoardingActivity extends Activity implements
                     public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
                         signInWithCredentials(phoneAuthCredential, finalPhoneNumber);
                         Log.d("KRYPTO_FIREBASE", "onVerificationCompleted : " + phoneAuthCredential.getSmsCode());
+                            hideProgressDialog();
                     }
 
                     @Override
                     public void onVerificationFailed(FirebaseException e) {
                         Log.d("KRYPTO_FIREBASE", "onVerificationFailed", e);
+                        hideProgressDialog();
                     }
 
                     @Override
@@ -363,6 +367,7 @@ public class OnBoardingActivity extends Activity implements
                         super.onCodeSent(verificationId, forceResendingToken);
                         mVerificationId = verificationId;
                         Log.d("KRYPTO_FIREBASE", "onCodeSent: " + verificationId);
+                        hideProgressDialog();
 
                     }
                 };
