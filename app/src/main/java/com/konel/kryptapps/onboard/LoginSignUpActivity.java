@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -16,6 +17,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -109,6 +115,27 @@ public class LoginSignUpActivity extends AppCompatActivity {
                                     user.getPhoneNumber(),
                                     user.getEmail(),
                                     user.getPhotoUrl()));
+
+                            User userOb = new User("halnoa", "999999999");
+
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference usersCollection = database.getReference("users");
+                            DatabaseReference userObject = usersCollection.child("1234567");
+                            userObject.setValue(userOb);
+
+                            userObject.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    Toast.makeText(LoginSignUpActivity.this, "1", Toast.LENGTH_SHORT);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                         } else {
                             Log.d("KRYPTO_FIREBASE", "signInWithCredentials: Failed", task.getException());
                         }
