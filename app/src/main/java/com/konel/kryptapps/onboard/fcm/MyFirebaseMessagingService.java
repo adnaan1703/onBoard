@@ -9,6 +9,7 @@ import timber.log.Timber;
  * Created by tushargupta on 21/06/17.
  */
 
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
@@ -26,5 +27,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Timber.d("Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
+
     }
 }

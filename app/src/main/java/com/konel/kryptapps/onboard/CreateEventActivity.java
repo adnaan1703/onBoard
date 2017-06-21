@@ -12,7 +12,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.konel.kryptapps.onboard.Home.Event;
+import com.konel.kryptapps.onboard.utils.CodeUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -82,6 +85,11 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                 Event e = createEventObject();
                 if (e != null) {
                     //TODO anupam save it to Db
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference userCollection = database.getReference("events");
+                    DatabaseReference userObject = userCollection.child(e.getId());
+                    userObject.setValue(e);
+
                 } else {
                     showErrorToast();
                 }
@@ -113,6 +121,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
             return null;
         }
         Event e = new Event();
+        e.setId(CodeUtil.getHashFromEventTitle(mEventName.getText().toString()));
         e.setEventName(mEventName.getText().toString());
         e.setEventDate(mEventDate.getText().toString());
         e.setEventDescription(mEventDescription.getText().toString());
