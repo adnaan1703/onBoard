@@ -39,9 +39,6 @@ public class User {
         setFcmId(fcmId);
     }
 
-    public User() {
-
-    }
 
     public void setFcmId(String fcmId) {
         this.fcmId = fcmId;

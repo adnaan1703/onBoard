@@ -16,8 +16,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.konel.kryptapps.onboard.Home.Event;
@@ -117,13 +120,34 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void updateUser(String id) {
+    private void updateUser(final String id) {
 
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(PreferenceUtil.getString(PreferenceUtil.USER_ID))
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        updateUserOnRt(user, id);
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void updateUserOnRt(User user, String id) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference userCollection = database.getReference("users");
         DatabaseReference userObject = userCollection.child(PreferenceUtil.getString(PreferenceUtil.USER_ID));
-        User user = new User();
-        ArrayList<String> createdEvents = new ArrayList<>();
+        ArrayList<String> createdEvents = user.getEventsCreated();
+        if (createdEvents == null)
+            createdEvents = new ArrayList<>();
         createdEvents.add(id);
         user.setEventsCreated(createdEvents);
         userObject.setValue(user);
