@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,23 +25,19 @@ import butterknife.ButterKnife;
  */
 public class ProfileFragment extends Fragment {
 
+    @BindView(R.id.profile_image)
+    ImageView profile_image;
+    @BindView(R.id.user_name)
+    TextView user_name;
+    @BindView(R.id.user_email)
+    TextView user_email;
+    @BindView(R.id.user_phone_number)
+    TextView user_phone_number;
+
     // All views
     public ProfileFragment() {
         // Required empty public constructor
     }
-
-    @BindView(R.id.profile_image)
-    ImageView profile_image;
-
-    @BindView(R.id.user_name)
-    TextView user_name;
-
-    @BindView(R.id.user_email)
-    TextView user_email;
-
-    @BindView(R.id.user_phone_number)
-    TextView user_phone_number;
-
 
     public static ProfileFragment newInstance() {
         
@@ -83,7 +78,7 @@ public class ProfileFragment extends Fragment {
         if (user == null)
             return;
 
-        user_name.setText(user.displayName);
+        user_name.setText(user.name);
         user_email.setText(user.email);
         user_phone_number.setText(user.phoneNumber);
     }

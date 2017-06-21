@@ -1,5 +1,7 @@
 package com.konel.kryptapps.onboard.model;
 
+import java.util.ArrayList;
+
 /**
  * @author Anupam Singh
  * @version 1.0
@@ -7,11 +9,12 @@ package com.konel.kryptapps.onboard.model;
  */
 public class User {
 
-    public String displayName;
+    public String name;
     public String email;
     public String phoneNumber;
     public String fcmId;
     public String photoUrl;
+    public ArrayList<String> eventsCreated;
 
     public User() {
 
@@ -36,12 +39,13 @@ public class User {
         setFcmId(fcmId);
     }
 
+
     public void setFcmId(String fcmId) {
         this.fcmId = fcmId;
     }
 
     public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+        this.name = displayName;
     }
 
     public void setEmail(String email) {
@@ -54,5 +58,13 @@ public class User {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public ArrayList<String> getEventsCreated() {
+        return eventsCreated;
+    }
+
+    public void setEventsCreated(ArrayList<String> eventsCreated) {
+        this.eventsCreated = eventsCreated;
     }
 }

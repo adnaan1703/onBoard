@@ -164,6 +164,20 @@ public class OnBoardingActivity extends Activity implements
             Toast.makeText(this, " kindly verify your phone  number", Toast.LENGTH_SHORT).show();
         } else {
             //phone number is there , verify it first
+            PreferenceUtil.setString(PreferenceUtil.USER_NAME, user.getDisplayName());
+
+            User userOb;
+            String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
+            if (!TextUtils.isEmpty(fcmId)) {
+                userOb = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), String.valueOf(user.getPhotoUrl()), fcmId);
+            } else
+                userOb = new User(user.getDisplayName(), user.getEmail(), String.valueOf(user.getPhotoUrl()), user.getPhoneNumber());
+
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference userCollection = database.getReference("users");
+            DatabaseReference userObject = userCollection.child(user.getPhoneNumber());
+            userObject.setValue(userOb);
             openHomeScreen(user.getPhoneNumber());
         }
     }
@@ -354,11 +368,14 @@ public class OnBoardingActivity extends Activity implements
                     } else
                         userOb = new User(user.getDisplayName(), user.getEmail(), String.valueOf(user.getPhotoUrl()), phoneNumber);
 
+
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference userCollection = database.getReference("users");
                     DatabaseReference userObject = userCollection.child(phoneNumber);
                     userObject.setValue(userOb);
                     // Opening Home after succesful user creation
+                    PreferenceUtil.setString(PreferenceUtil.USER_NAME, user.getDisplayName());
+                    openHomeScreen(phoneNumber);
 
                 } else {
                     Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
@@ -375,7 +392,6 @@ public class OnBoardingActivity extends Activity implements
         PreferenceUtil.setString(PreferenceUtil.USER_ID, phoneNumber);
         finish();
     }
-
 
 
     private boolean isValidPhoneNumber(String text) {
