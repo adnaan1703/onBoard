@@ -63,7 +63,6 @@ public class EventFragment extends Fragment {
         eventsRecycler.setAdapter(adapter);
         return rootView;
     }
-
     @Override
     public void onResume() {
         super.onResume();
