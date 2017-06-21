@@ -89,8 +89,6 @@ public class EventAcceptDeclineDialog extends Dialog {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         updateUserEventAccepted(user, mEvent);
-
-
                     }
 
                     @Override
@@ -100,6 +98,17 @@ public class EventAcceptDeclineDialog extends Dialog {
                     }
                 });
 
+
+        ArrayList<String> arrayList = mEvent.getAttendees();
+        if(arrayList==null)
+            arrayList = new ArrayList<>();
+        arrayList.add(PreferenceUtil.USER_NAME);
+
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference userCollection = database.getReference("events");
+        DatabaseReference userObject = userCollection.child(mEvent.getId());
+        userObject.setValue(mEvent);
 
     }
 

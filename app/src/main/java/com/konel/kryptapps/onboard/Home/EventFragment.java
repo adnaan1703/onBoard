@@ -1,6 +1,7 @@
 package com.konel.kryptapps.onboard.Home;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.konel.kryptapps.onboard.DetailActivity;
 import com.konel.kryptapps.onboard.R;
 import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.PreferenceUtil;
@@ -59,7 +61,14 @@ public class EventFragment extends Fragment {
 
         noInvitations = (TextView) rootView.findViewById(R.id.no_invitations_text);
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        adapter.callback = new EventsAdapter.Callback() {
+            @Override
+            public void click(Event data) {
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                intent.putExtra("id", data.getId());
+                getContext().startActivity(intent);
+            }
+        };
         eventsRecycler.setAdapter(adapter);
         return rootView;
     }
@@ -77,6 +86,7 @@ public class EventFragment extends Fragment {
                         if (user.getEventsInvited() != null) {
                             eventsRecycler.setVisibility(View.VISIBLE);
                             noInvitations.setVisibility(View.GONE);
+                            events.clear();
                             events.addAll(user.getEventsInvited());
                             updateAdapter();
                         } else {

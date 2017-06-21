@@ -21,7 +21,13 @@ import butterknife.ButterKnife;
 
 class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
 
+    public interface Callback {
+        void click(Event data);
+    }
+
     private List<Event> mEvents;
+
+    public Callback callback;
 
     public EventsAdapter(List<Event> events) {
         this.mEvents = events;
@@ -43,7 +49,7 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
         return mEvents != null ? mEvents.size() : 0;
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.eventName)
         TextView eventName;
@@ -62,13 +68,22 @@ class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.MyViewHolder> {
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(Event data) {
+        public void bind(final Event data) {
             eventName.setText(data.getEventName());
             eventDescription.setText(data.getEventDescription());
             eventLocation.setText(data.getEventVenue() + data.getEventDate());
             Glide.with(itemView.getContext())
                     .load(data.getUrl())
                     .into(eventImage);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (callback != null) {
+                        callback.click(data);
+                    }
+                }
+            });
         }
     }
 

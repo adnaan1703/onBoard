@@ -130,8 +130,6 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         updateUserOnRt(user, id);
-
-
                     }
 
                     @Override

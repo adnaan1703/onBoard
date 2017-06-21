@@ -65,7 +65,7 @@ public class OnBoardingActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_on_boarding_activity);
         progressBar = (ProgressBar) findViewById(R.id.onboarding_progressbar);
-        userPhoneNumber = (EditText) findViewById(R.id.user_phone_number);
+        userPhoneNumber = (EditText) findViewById(R.id.user_phone_number_d);
         loginButton = (Button) findViewById(R.id.user_loginbutton);
         loginButton.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -167,7 +167,6 @@ public class OnBoardingActivity extends Activity implements
             Toast.makeText(this, " kindly verify your phone  number", Toast.LENGTH_SHORT).show();
         } else {
             //phone number is there , verify it first
-            PreferenceUtil.setString(PreferenceUtil.USER_NAME, user.getDisplayName());
 
             final FirebaseUser user1 = user;
             FirebaseDatabase.getInstance().getReference("users")
@@ -386,40 +385,20 @@ public class OnBoardingActivity extends Activity implements
                 if (task.isSuccessful()) {
 
                     final FirebaseUser user1 = user;
-                    FirebaseDatabase.getInstance().getReference("users")
-                            .child(PreferenceUtil.getString(user.getPhoneNumber()))
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    // GenericTypeIndicator<List<Event>> t = new GenericTypeIndicator<>();
-                                    User user = dataSnapshot.getValue(User.class);
-                                    if (user == null) {
-                                        User userOb;
-                                        String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
-                                        if (!TextUtils.isEmpty(fcmId)) {
-                                            userOb = new User(user1.getDisplayName(), user1.getEmail(), user1.getPhoneNumber(), String.valueOf(user1.getPhotoUrl()), fcmId);
-                                        } else
-                                            userOb = new User(user1.getDisplayName(), user1.getEmail(), String.valueOf(user1.getPhotoUrl()), user1.getPhoneNumber());
+
+                    User userOb;
+                    String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
+                    if (!TextUtils.isEmpty(fcmId)) {
+                        userOb = new User(user1.getDisplayName(), user1.getEmail(), user1.getPhoneNumber(), String.valueOf(user1.getPhotoUrl()), fcmId);
+                    } else
+                        userOb = new User(user1.getDisplayName(), user1.getEmail(), String.valueOf(user1.getPhotoUrl()), user1.getPhoneNumber());
 
 
-                                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                        DatabaseReference userCollection = database.getReference("users");
-                                        DatabaseReference userObject = userCollection.child(user1.getPhoneNumber());
-                                        userObject.setValue(userOb);
-
-                                    }
-                                    openHomeScreen(phoneNumber);
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            });
-
-
-
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference userCollection = database.getReference("users");
+                    DatabaseReference userObject = userCollection.child(user1.getPhoneNumber());
+                    userObject.setValue(userOb);
+                    openHomeScreen(phoneNumber);
 
                 } else {
                     Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();

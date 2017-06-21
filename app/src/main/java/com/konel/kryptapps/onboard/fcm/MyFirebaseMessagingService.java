@@ -32,12 +32,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_home_black_24dp)
-                        .setContentTitle("Notification Received")
+                        .setContentTitle("Your event is accepted")
                         .setContentText("Hello World");
 
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        mNotifyMgr.notify(100, mBuilder.build());
+        mNotifyMgr.notify(0, mBuilder.build());
     }
 }

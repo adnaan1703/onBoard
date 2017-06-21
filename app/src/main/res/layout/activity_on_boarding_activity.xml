@@ -7,7 +7,7 @@
 
 
     <EditText
-        android:id="@+id/user_phone_number"
+        android:id="@+id/user_phone_number_d"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
