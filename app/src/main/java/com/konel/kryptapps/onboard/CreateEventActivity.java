@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -99,18 +101,17 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         switch (v.getId()) {
             case R.id.save:
                 Event e = createEventObject();
-                startInvite();
                 if (e != null) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference userCollection = database.getReference("events");
                     DatabaseReference userObject = userCollection.child(e.getId());
+                    startInvite(e.getId());
                     userObject.setValue(e);
 
                 } else {
                     showErrorToast();
                 }
                 updateUser(e.getId());
-
                 break;
             case R.id.event_date_text:
                 new DatePickerDialog(this, mDatePickerListner, mCalendar
@@ -185,11 +186,11 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         return e;
     }
 
-    private void startInvite() {
+    private void startInvite(String hash) {
         Intent intent = new AppInviteInvitation.IntentBuilder("Invite title")
-                .setMessage("hey testing one two three")
-                .setDeepLink(getDeeplink("hash#no"))
-                .setCallToActionText("Invite")
+                .setMessage("hey come join us on a meet-up")
+                .setDeepLink(getDeeplink(hash))
+                .setCallToActionText("Select invitee")
                 .build();
         startActivityForResult(intent, REQUEST_INVITE);
     }
@@ -221,6 +222,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                 for (String id : ids) {
                     Log.d(TAG, "onActivityResult: sent invitation " + id);
                 }
+                finish();
             } else {
                 Log.d(TAG, "failed");
 
