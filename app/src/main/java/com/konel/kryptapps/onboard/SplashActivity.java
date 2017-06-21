@@ -111,6 +111,10 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // TODO: 21/Jun/17 @adnaan: add here intents..
+                Intent intent = new Intent(SplashActivity.this, OnBoardingActivity.class);
+                startActivity(intent);
+                finish();
+
             }
         }, 1800);
     }
