@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     tools:context="com.konel.kryptapps.onboard.Home.EventFragment">
 
-    <TextView
-        android:id="@+id/sometext"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:text="@string/hello_blank_fragment" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/eventsRecycler"
         android:clipToPadding="false"
