@@ -10,11 +10,27 @@ public class User {
     public String displayName;
     public String email;
     public String phoneNumber;
+    public String fcmId;
 
     public User(String displayName, String email, String phoneNumber) {
         setDisplayName(displayName);
         setEmail(email);
         setPhoneNumber(phoneNumber);
+    }
+
+    public User(String displayName, String email, String phoneNumber, String fcmId) {
+        setDisplayName(displayName);
+        setEmail(email);
+        setPhoneNumber(phoneNumber);
+        setFcmId(fcmId);
+    }
+
+    public User(String fcmId) {
+        setFcmId(fcmId);
+    }
+
+    public void setFcmId(String fcmId) {
+        this.fcmId = fcmId;
     }
 
     public void setDisplayName(String displayName) {

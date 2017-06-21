@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.konel.kryptapps.onboard.Home.HomeActivity;
 import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.CodeUtil;
+import com.konel.kryptapps.onboard.utils.PreferenceUtil;
 
 import java.util.concurrent.TimeUnit;
 
@@ -346,14 +347,21 @@ public class OnBoardingActivity extends Activity implements
             public void onComplete(@NonNull Task<Void> task) {
                 Log.e("status", String.valueOf(task.isSuccessful()));
                 if (task.isSuccessful()) {
-                    User userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber);
+                    User userOb;
+                    String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
+                    if (!TextUtils.isEmpty(fcmId)) {
+                        userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber, fcmId);
+                    } else
+                        userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber);
+
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference userCollection = database.getReference("users");
                     DatabaseReference userObject = userCollection.child(phoneNumber);
                     userObject.setValue(userOb);
-                    // Opening Home after sucefuk user creation
+                    // Opening Home after succesful user creation
                     Intent intent = new Intent(OnBoardingActivity.this, HomeActivity.class);
                     startActivity(intent);
+                    PreferenceUtil.setString(PreferenceUtil.USER_ID, phoneNumber);
                     finish();
                 } else {
                     Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();

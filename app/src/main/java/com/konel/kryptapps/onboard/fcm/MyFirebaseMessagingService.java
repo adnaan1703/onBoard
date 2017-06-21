@@ -26,5 +26,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Timber.d("Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
+
     }
 }
