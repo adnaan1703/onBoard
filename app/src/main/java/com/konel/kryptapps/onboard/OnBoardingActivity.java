@@ -163,7 +163,7 @@ public class OnBoardingActivity extends Activity implements
             Toast.makeText(this, " kindly verify your phone  number", Toast.LENGTH_SHORT).show();
         } else {
             //phone number is there , verify it first
-            Toast.makeText(this, " phone exists bc", Toast.LENGTH_SHORT).show();
+            openHomeScreen(user.getPhoneNumber());
         }
 
     }
@@ -350,19 +350,16 @@ public class OnBoardingActivity extends Activity implements
                     User userOb;
                     String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
                     if (!TextUtils.isEmpty(fcmId)) {
-                        userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber, fcmId);
+                        userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber, String.valueOf(user.getPhotoUrl()), fcmId);
                     } else
-                        userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber);
+                        userOb = new User(user.getDisplayName(), user.getEmail(), String.valueOf(user.getPhotoUrl()), phoneNumber);
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference userCollection = database.getReference("users");
                     DatabaseReference userObject = userCollection.child(phoneNumber);
                     userObject.setValue(userOb);
                     // Opening Home after succesful user creation
-                    Intent intent = new Intent(OnBoardingActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    PreferenceUtil.setString(PreferenceUtil.USER_ID, phoneNumber);
-                    finish();
+
                 } else {
                     Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
                 }
@@ -371,6 +368,14 @@ public class OnBoardingActivity extends Activity implements
 
 
     }
+
+    private void openHomeScreen(String phoneNumber) {
+        Intent intent = new Intent(OnBoardingActivity.this, HomeActivity.class);
+        startActivity(intent);
+        PreferenceUtil.setString(PreferenceUtil.USER_ID, phoneNumber);
+        finish();
+    }
+
 
 
     private boolean isValidPhoneNumber(String text) {

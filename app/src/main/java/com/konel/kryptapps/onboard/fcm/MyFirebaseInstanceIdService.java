@@ -27,6 +27,7 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
             DatabaseReference userObject = userCollection.child(PreferenceUtil.getString(PreferenceUtil.USER_ID));
             User user = new User(FirebaseInstanceId.getInstance().getToken());
             userObject.setValue(user);
+
         }
         Timber.d(FirebaseInstanceId.getInstance().getToken());
     }

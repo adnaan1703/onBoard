@@ -11,18 +11,21 @@ public class User {
     public String email;
     public String phoneNumber;
     public String fcmId;
+    public String photoUrl;
 
-    public User(String displayName, String email, String phoneNumber) {
+    public User(String displayName, String email, String phoneNumber, String photoUrl) {
         setDisplayName(displayName);
         setEmail(email);
         setPhoneNumber(phoneNumber);
+        setPhotoUrl(photoUrl);
     }
 
-    public User(String displayName, String email, String phoneNumber, String fcmId) {
+    public User(String displayName, String email, String phoneNumber, String photoUrl, String fcmId) {
         setDisplayName(displayName);
         setEmail(email);
         setPhoneNumber(phoneNumber);
         setFcmId(fcmId);
+        setPhotoUrl(photoUrl);
     }
 
     public User(String fcmId) {
@@ -43,5 +46,9 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 }
