@@ -9,7 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.konel.kryptapps.onboard.R;
+import com.konel.kryptapps.onboard.utils.PreferenceUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +30,12 @@ public class EventFragment extends Fragment {
 
     @BindView(R.id.eventsRecycler)
     RecyclerView eventsRecycler;
+
+    private List<String> eventIDs = new ArrayList<>();
+    private List<Event> events = new ArrayList<>();
+    private List<Event> allEventsOnDB = new ArrayList<>();
+
+    private EventsAdapter adapter = new EventsAdapter(events);
 
     public EventFragment() {
         // Required empty public constructor
@@ -43,8 +58,35 @@ public class EventFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        eventsRecycler.setAdapter(new EventsAdapter(null));
+
+        eventsRecycler.setAdapter(adapter);
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(PreferenceUtil.getString(PreferenceUtil.USER_ID))
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<List<Event>> t = new GenericTypeIndicator<>();
+                        if (dataSnapshot.getValue(t) != null) {
+                            events.addAll(dataSnapshot.getValue(t));
+                        }
+                        updateAdapter();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void updateAdapter() {
+        adapter.notifyDataSetChanged();
+    }
 }
