@@ -16,12 +16,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.konel.kryptapps.onboard.Home.Event;
+import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.CodeUtil;
+import com.konel.kryptapps.onboard.utils.PreferenceUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CreateEventActivity extends AppCompatActivity implements View.OnClickListener {
@@ -92,8 +97,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
             case R.id.save:
                 Event e = createEventObject();
                 startInvite();
-               /* if (e != null) {
-                    //TODO anupam save it to Db
+                if (e != null) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference userCollection = database.getReference("events");
                     DatabaseReference userObject = userCollection.child(e.getId());
@@ -101,7 +105,9 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
 
                 } else {
                     showErrorToast();
-                }*/
+                }
+                updateUser(e.getId());
+
                 break;
             case R.id.event_date_text:
                 new DatePickerDialog(this, mDatePickerListner, mCalendar
@@ -109,6 +115,18 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                         mCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 break;
         }
+    }
+
+    private void updateUser(String id) {
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference userCollection = database.getReference("users");
+        DatabaseReference userObject = userCollection.child(PreferenceUtil.getString(PreferenceUtil.USER_ID));
+        User user = new User();
+        ArrayList<String> createdEvents = new ArrayList<>();
+        createdEvents.add(id);
+        user.setEventsCreated(createdEvents);
+        userObject.setValue(user);
     }
 
     private void showErrorToast() {
@@ -134,6 +152,11 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         e.setEventName(mEventName.getText().toString());
         e.setEventDate(mEventDate.getText().toString());
         e.setEventDescription(mEventDescription.getText().toString());
+        e.setAttendees_count(1);
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        stringArrayList.add(PreferenceUtil.getString(PreferenceUtil.USER_NAME));
+        e.setAttendees(stringArrayList);
+        e.setOwner_id(PreferenceUtil.getString(PreferenceUtil.USER_ID));
         e.setEventVenue(mEventVenue.getText().toString());
         return e;
     }

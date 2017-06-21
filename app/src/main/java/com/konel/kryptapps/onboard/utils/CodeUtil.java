@@ -59,7 +59,6 @@ public class CodeUtil {
         return false;
     }
 
-
     public static String getHashFromEventTitle(String eventTitle) {
 
         int hash = 7;
