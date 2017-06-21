@@ -28,8 +28,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.konel.kryptapps.onboard.Home.HomeActivity;
 import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.CodeUtil;
@@ -166,18 +169,38 @@ public class OnBoardingActivity extends Activity implements
             //phone number is there , verify it first
             PreferenceUtil.setString(PreferenceUtil.USER_NAME, user.getDisplayName());
 
-            User userOb;
-            String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
-            if (!TextUtils.isEmpty(fcmId)) {
-                userOb = new User(user.getDisplayName(), user.getEmail(), user.getPhoneNumber(), String.valueOf(user.getPhotoUrl()), fcmId);
-            } else
-                userOb = new User(user.getDisplayName(), user.getEmail(), String.valueOf(user.getPhotoUrl()), user.getPhoneNumber());
+            final FirebaseUser user1 = user;
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(PreferenceUtil.getString(user.getPhoneNumber()))
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            // GenericTypeIndicator<List<Event>> t = new GenericTypeIndicator<>();
+                            User user = dataSnapshot.getValue(User.class);
+                            if (user == null) {
+                                User userOb;
+                                String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
+                                if (!TextUtils.isEmpty(fcmId)) {
+                                    userOb = new User(user1.getDisplayName(), user1.getEmail(), user1.getPhoneNumber(), String.valueOf(user1.getPhotoUrl()), fcmId);
+                                } else
+                                    userOb = new User(user1.getDisplayName(), user1.getEmail(), String.valueOf(user1.getPhotoUrl()), user1.getPhoneNumber());
 
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference userCollection = database.getReference("users");
-            DatabaseReference userObject = userCollection.child(user.getPhoneNumber());
-            userObject.setValue(userOb);
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                DatabaseReference userCollection = database.getReference("users");
+                                DatabaseReference userObject = userCollection.child(user1.getPhoneNumber());
+                                userObject.setValue(userOb);
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+            PreferenceUtil.setString(PreferenceUtil.USER_NAME, user.getDisplayName());
             openHomeScreen(user.getPhoneNumber());
         }
     }
@@ -361,21 +384,42 @@ public class OnBoardingActivity extends Activity implements
             public void onComplete(@NonNull Task<Void> task) {
                 Log.e("status", String.valueOf(task.isSuccessful()));
                 if (task.isSuccessful()) {
-                    User userOb;
-                    String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
-                    if (!TextUtils.isEmpty(fcmId)) {
-                        userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber, String.valueOf(user.getPhotoUrl()), fcmId);
-                    } else
-                        userOb = new User(user.getDisplayName(), user.getEmail(), String.valueOf(user.getPhotoUrl()), phoneNumber);
+
+                    final FirebaseUser user1 = user;
+                    FirebaseDatabase.getInstance().getReference("users")
+                            .child(PreferenceUtil.getString(user.getPhoneNumber()))
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    // GenericTypeIndicator<List<Event>> t = new GenericTypeIndicator<>();
+                                    User user = dataSnapshot.getValue(User.class);
+                                    if (user == null) {
+                                        User userOb;
+                                        String fcmId = PreferenceUtil.getString(PreferenceUtil.FCM_TOKEN);
+                                        if (!TextUtils.isEmpty(fcmId)) {
+                                            userOb = new User(user1.getDisplayName(), user1.getEmail(), user1.getPhoneNumber(), String.valueOf(user1.getPhotoUrl()), fcmId);
+                                        } else
+                                            userOb = new User(user1.getDisplayName(), user1.getEmail(), String.valueOf(user1.getPhotoUrl()), user1.getPhoneNumber());
 
 
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference userCollection = database.getReference("users");
-                    DatabaseReference userObject = userCollection.child(phoneNumber);
-                    userObject.setValue(userOb);
-                    // Opening Home after succesful user creation
-                    PreferenceUtil.setString(PreferenceUtil.USER_NAME, user.getDisplayName());
-                    openHomeScreen(phoneNumber);
+                                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                        DatabaseReference userCollection = database.getReference("users");
+                                        DatabaseReference userObject = userCollection.child(user1.getPhoneNumber());
+                                        userObject.setValue(userOb);
+
+                                    }
+                                    openHomeScreen(phoneNumber);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
+
+
+
 
                 } else {
                     Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();

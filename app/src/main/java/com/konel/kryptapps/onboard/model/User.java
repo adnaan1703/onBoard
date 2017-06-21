@@ -1,5 +1,7 @@
 package com.konel.kryptapps.onboard.model;
 
+import com.konel.kryptapps.onboard.Home.Event;
+
 import java.util.ArrayList;
 
 /**
@@ -15,6 +17,7 @@ public class User {
     public String fcmId;
     public String photoUrl;
     public ArrayList<String> eventsCreated;
+    ArrayList<Event> eventsInvited;
 
     public User() {
 
@@ -66,5 +69,13 @@ public class User {
 
     public void setEventsCreated(ArrayList<String> eventsCreated) {
         this.eventsCreated = eventsCreated;
+    }
+
+    public ArrayList<Event> getEventsInvited() {
+        return eventsInvited;
+    }
+
+    public void setEventsInvited(ArrayList<Event> eventsInvited) {
+        this.eventsInvited = eventsInvited;
     }
 }

@@ -8,13 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.konel.kryptapps.onboard.R;
+import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.PreferenceUtil;
 
 import java.util.ArrayList;
@@ -30,11 +31,10 @@ public class EventFragment extends Fragment {
 
     @BindView(R.id.eventsRecycler)
     RecyclerView eventsRecycler;
-
+    TextView noInvitations;
     private List<String> eventIDs = new ArrayList<>();
     private List<Event> events = new ArrayList<>();
     private List<Event> allEventsOnDB = new ArrayList<>();
-
     private EventsAdapter adapter = new EventsAdapter(events);
 
     public EventFragment() {
@@ -57,6 +57,7 @@ public class EventFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
         ButterKnife.bind(this, rootView);
 
+        noInvitations = (TextView) rootView.findViewById(R.id.no_invitations_text);
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
         eventsRecycler.setAdapter(adapter);
@@ -72,11 +73,17 @@ public class EventFragment extends Fragment {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        GenericTypeIndicator<List<Event>> t = new GenericTypeIndicator<>();
-                        if (dataSnapshot.getValue(t) != null) {
-                            events.addAll(dataSnapshot.getValue(t));
+                        // GenericTypeIndicator<List<Event>> t = new GenericTypeIndicator<>();
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user.getEventsInvited() != null) {
+                            eventsRecycler.setVisibility(View.VISIBLE);
+                            noInvitations.setVisibility(View.GONE);
+                            events.addAll(user.getEventsInvited());
+                            updateAdapter();
+                        } else {
+                            noInvitations.setVisibility(View.VISIBLE);
+                            eventsRecycler.setVisibility(View.GONE);
                         }
-                        updateAdapter();
                     }
 
                     @Override
