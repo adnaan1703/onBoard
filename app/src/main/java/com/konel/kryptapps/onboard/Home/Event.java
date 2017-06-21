@@ -9,6 +9,7 @@ public class Event {
     private String mEventDate;
     private String mEventDescription;
     private String mEventVenue;
+    private String url;
 
     public String getEventName() {
         return mEventName;
@@ -40,5 +41,13 @@ public class Event {
 
     public void setEventVenue(String mEventVenue) {
         this.mEventVenue = mEventVenue;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

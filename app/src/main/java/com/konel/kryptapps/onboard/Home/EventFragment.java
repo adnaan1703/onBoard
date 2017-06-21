@@ -22,10 +22,6 @@ import butterknife.ButterKnife;
  */
 public class EventFragment extends Fragment {
 
-    // All views
-    @BindView(R.id.sometext)
-    TextView someText;
-
     @BindView(R.id.eventsRecycler)
     RecyclerView eventsRecycler;
 
@@ -48,8 +44,6 @@ public class EventFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
         ButterKnife.bind(this, rootView);
-
-        someText.setText("Event Page");
 
         eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         eventsRecycler.setAdapter(new EventsAdapter(null));
