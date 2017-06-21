@@ -63,25 +63,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/activity_vertical_margin">
+        android:padding="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/declined"
+            android:background="@color/colorPrimaryDark"
+            android:text="YES"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:text="YES" />
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/accepted"
+            android:text="NO"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
             android:background="@color/colorBackground"
-            android:text="NO" />
+            android:layout_height="40dp"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>
