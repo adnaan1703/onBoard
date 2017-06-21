@@ -16,6 +16,10 @@ public class User {
     public String photoUrl;
     public ArrayList<String> eventsCreated;
 
+    public User() {
+
+    }
+
     public User(String displayName, String email, String phoneNumber, String photoUrl) {
         setDisplayName(displayName);
         setEmail(email);
