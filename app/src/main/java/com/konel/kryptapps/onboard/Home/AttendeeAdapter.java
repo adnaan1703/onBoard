@@ -45,6 +45,9 @@ public class AttendeeAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
+        if (name==null){
+            return 0;
+        }
         return name.size();
     }
 }

@@ -16,10 +16,15 @@ import android.widget.FrameLayout;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.appinvite.FirebaseAppInvite;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.konel.kryptapps.onboard.CreateEventActivity;
 import com.konel.kryptapps.onboard.R;
+import com.konel.kryptapps.onboard.custom.EventAcceptDeclineDialog;
 
 import java.util.List;
 
@@ -119,9 +124,27 @@ public class HomeActivity extends AppCompatActivity {
                             List<String> path = u.getPathSegments();
                             String eventId = path.get(0);
                             Log.d(TAG, eventId);
+                            FirebaseDatabase.getInstance().getReference("events")
+                                    .child(eventId)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            Event event = dataSnapshot.getValue(Event.class);
+                                            if (event==null){
+                                                return;
+                                            }
+                                            EventAcceptDeclineDialog dialog =
+                                                    new EventAcceptDeclineDialog(HomeActivity.this,event);
+                                            dialog.show();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
 
 
-                            // startActivity(intent);
                         }
                         // [END_EXCLUDE]
                     }
