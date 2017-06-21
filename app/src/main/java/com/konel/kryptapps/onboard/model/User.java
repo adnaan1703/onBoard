@@ -12,6 +12,10 @@ public class User {
     public String phoneNumber;
     public String fcmId;
 
+    public User() {
+
+    }
+
     public User(String displayName, String email, String phoneNumber) {
         setDisplayName(displayName);
         setEmail(email);
