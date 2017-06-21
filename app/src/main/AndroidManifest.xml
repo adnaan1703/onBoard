@@ -27,6 +27,17 @@
             android:name=".Home.HomeActivity"
             android:label="@string/title_activity_home">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="onb.com"
+                    android:scheme="https"/>
+                <data
+                    android:host="h22u9.app.goo.gl"
+                    android:scheme="https"/>
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
