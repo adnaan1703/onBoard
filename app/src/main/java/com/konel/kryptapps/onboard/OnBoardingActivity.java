@@ -153,7 +153,6 @@ public class OnBoardingActivity extends Activity implements
                     }
                 });
     }
-
     private void updateUI(FirebaseUser user) {
         //here we will check for user data and open the home screen or onbaording screen if the data is incorrect
         if (TextUtils.isEmpty(user.getPhoneNumber())) {
