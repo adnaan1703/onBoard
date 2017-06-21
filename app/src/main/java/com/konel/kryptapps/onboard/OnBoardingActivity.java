@@ -165,7 +165,6 @@ public class OnBoardingActivity extends Activity implements
             //phone number is there , verify it first
             openHomeScreen(user.getPhoneNumber());
         }
-
     }
 
     private void hideProgressDialog() {
