@@ -2,12 +2,13 @@ package com.konel.kryptapps.onboard;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -17,16 +18,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.konel.kryptapps.onboard.Home.HomeActivity;
+import com.konel.kryptapps.onboard.model.User;
 import com.konel.kryptapps.onboard.utils.CodeUtil;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Anupam Singh
@@ -38,28 +46,31 @@ public class OnBoardingActivity extends Activity implements
         View.OnClickListener {
 
     private static final String TAG = "onBoardLog";
+    private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
     private GoogleApiClient mGoogleApiClient;
-    private static final int RC_SIGN_IN = 9001;
     private ProgressBar progressBar;
+    private EditText userPhoneNumber;
+    private Button loginButton;
+    private FirebaseUser user;
+    private String mVerificationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_on_boarding_activity);
         progressBar = (ProgressBar) findViewById(R.id.onboarding_progressbar);
-
+        userPhoneNumber = (EditText) findViewById(R.id.user_phone_number);
+        loginButton = (Button) findViewById(R.id.user_loginbutton);
+        loginButton.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -79,10 +90,10 @@ public class OnBoardingActivity extends Activity implements
 
         };
 
-        if(CodeUtil.isConnectedToInternet(this))
-        signIn();
-        else{
-            Toast.makeText(this,getString(R.string.kindly_check_your_internet),Toast.LENGTH_SHORT);
+        if (CodeUtil.isConnectedToInternet(this))
+            signIn();
+        else {
+            Toast.makeText(this, getString(R.string.kindly_check_your_internet), Toast.LENGTH_SHORT);
             finish();
         }
 
@@ -119,7 +130,6 @@ public class OnBoardingActivity extends Activity implements
         // [START_EXCLUDE silent]
         showProgressDialog();
         // [END_EXCLUDE]
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -128,7 +138,7 @@ public class OnBoardingActivity extends Activity implements
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -136,7 +146,6 @@ public class OnBoardingActivity extends Activity implements
                             Toast.makeText(OnBoardingActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
                         // [START_EXCLUDE]
                         hideProgressDialog();
                         // [END_EXCLUDE]
@@ -148,12 +157,12 @@ public class OnBoardingActivity extends Activity implements
         //here we will check for user data and open the home screen or onbaording screen if the data is incorrect
         if (TextUtils.isEmpty(user.getPhoneNumber())) {
             //the case when phone number is not present
-            Toast.makeText(this,"no phone",Toast.LENGTH_SHORT).show();
-
+            userPhoneNumber.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
+            Toast.makeText(this, " kindly verify your phone  number", Toast.LENGTH_SHORT).show();
         } else {
             //phone number is there , verify it first
-            Toast.makeText(this," phone",Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(this, " phone exists bc", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -167,33 +176,32 @@ public class OnBoardingActivity extends Activity implements
     }
 
 
-    private void signOut() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google sign out
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        //  updateUI(null);
-                    }
-                });
-    }
-
-    private void revokeAccess() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google revoke access
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        // updateUI(null);
-                    }
-                });
-    }
+//    private void signOut() {
+//        // Firebase sign out
+//        mAuth.signOut();
+//
+//        // Google sign out
+//        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+//                new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(@NonNull Status status) {
+//                        //  updateUI(null);
+//                    }
+//                });
+//    }
+//
+//    private void revokeAccess() {
+//        // Firebase sign out
+//        mAuth.signOut();
+//        // Google revoke access
+//        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+//                new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(@NonNull Status status) {
+//                        // updateUI(null);
+//                    }
+//                });
+//    }
 
     @Override
     public void onStart() {
@@ -232,40 +240,40 @@ public class OnBoardingActivity extends Activity implements
 //                });
 //    }
 
-    private void getUserDataFromFB() {
+//    private void getUserDataFromFB() {
+//
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (user != null) {
+//            // Name, email address, and profile photo Url
+//            String name = user.getDisplayName();
+//            String email = user.getEmail();
+//            Uri photoUrl = user.getPhotoUrl();
+//            // The user's ID, unique to the Firebase project. Do NOT use this value to
+//            // authenticate with your backend server, if you have one. Use
+//            // FirebaseUser.getToken() instead.
+//            String uid = user.getUid();
+//        }
+//    }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
-        }
-    }
-
-    private void createAnUser(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(OnBoardingActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-    }
+//    private void createAnUser(String email, String password) {
+//        mAuth.createUserWithEmailAndPassword(email, password)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+//
+//                        // If sign in fails, display a message to the user. If sign in succeeds
+//                        // the auth state listener will be notified and logic to handle the
+//                        // signed in user can be handled in the listener.
+//                        if (!task.isSuccessful()) {
+//                            Toast.makeText(OnBoardingActivity.this, "Authentication failed.",
+//                                    Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        // ...
+//                    }
+//                });
+//    }
 
     @Override
     public void onClick(View view) {
@@ -278,6 +286,88 @@ public class OnBoardingActivity extends Activity implements
 //            revokeAccess();
 //        }
 
+        if (i == R.id.user_loginbutton) {
+            displayAndCreateRtduser();
+        }
+
+    }
+
+    private void displayAndCreateRtduser() {
+        String userPhoneNum = userPhoneNumber.getText().toString();
+        if (isValidPhoneNumber(userPhoneNum)) {
+            onSubmit(userPhoneNum);
+
+        } else {
+            Toast.makeText(this, "kindly enter a valid phone number", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void onSubmit(String phoneNumber1) {
+        String phoneNumber = phoneNumber1;
+        phoneNumber = "+91" + phoneNumber;
+        final String finalPhoneNumber = phoneNumber;
+        PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback =
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                        signInWithCredentials(phoneAuthCredential, finalPhoneNumber);
+                        Log.d("KRYPTO_FIREBASE", "onVerificationCompleted : " + phoneAuthCredential.getSmsCode());
+                    }
+
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        Log.d("KRYPTO_FIREBASE", "onVerificationFailed", e);
+                    }
+
+                    @Override
+                    public void onCodeSent(String verificationId,
+                                           PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        super.onCodeSent(verificationId, forceResendingToken);
+                        mVerificationId = verificationId;
+                        Log.d("KRYPTO_FIREBASE", "onCodeSent: " + verificationId);
+
+                    }
+                };
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,
+                60,
+                TimeUnit.SECONDS,
+                this,
+                mCallback
+        );
+    }
+
+    private void signInWithCredentials(PhoneAuthCredential phoneAuthCredential, final String phoneNumber) {
+
+        user.updatePhoneNumber(phoneAuthCredential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.e("status", String.valueOf(task.isSuccessful()));
+                if (task.isSuccessful()) {
+                    User userOb = new User(user.getDisplayName(), user.getEmail(), phoneNumber);
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference userCollection = database.getReference("users");
+                    DatabaseReference userObject = userCollection.child(phoneNumber);
+                    userObject.setValue(userOb);
+                    // Opening Home after sucefuk user creation
+                    Intent intent = new Intent(OnBoardingActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(OnBoardingActivity.this, "error updating", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+    }
+
+
+    private boolean isValidPhoneNumber(String text) {
+
+        return !TextUtils.isEmpty(text) && text.length() == 10;
     }
 
     @Override
