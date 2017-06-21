@@ -2,8 +2,11 @@ package com.konel.kryptapps.onboard.Home;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.TextViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,9 @@ public class EventFragment extends Fragment {
     // All views
     @BindView(R.id.sometext)
     TextView someText;
+
+    @BindView(R.id.eventsRecycler)
+    RecyclerView eventsRecycler;
 
     public EventFragment() {
         // Required empty public constructor
@@ -43,8 +49,10 @@ public class EventFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
         ButterKnife.bind(this, rootView);
 
-        someText.setText("Events Page");
+        someText.setText("Event Page");
 
+        eventsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        eventsRecycler.setAdapter(new EventsAdapter(null));
         return rootView;
     }
 
