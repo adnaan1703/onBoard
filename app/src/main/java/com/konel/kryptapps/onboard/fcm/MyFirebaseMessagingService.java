@@ -1,7 +1,11 @@
 package com.konel.kryptapps.onboard.fcm;
 
+import android.app.NotificationManager;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.konel.kryptapps.onboard.R;
 
 import timber.log.Timber;
 
@@ -26,5 +30,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Timber.d("Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_home_black_24dp)
+                        .setContentTitle("Notification Received")
+                        .setContentText("Hello World");
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        mNotifyMgr.notify(100, mBuilder.build());
     }
 }
